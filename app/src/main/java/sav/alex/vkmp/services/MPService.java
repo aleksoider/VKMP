@@ -9,6 +9,8 @@ import java.io.IOException;
 import android.os.PowerManager;
 import android.media.AudioManager;
 
+import sav.alex.vkmp.classes.PlayList;
+import sav.alex.vkmp.intefaces.IAudio;
 import sav.alex.vkmp.intefaces.IPlayList;
 
 public class MPService extends Service implements MediaPlayer.OnErrorListener,
@@ -27,11 +29,11 @@ public class MPService extends Service implements MediaPlayer.OnErrorListener,
         Log.d(LOG_T, "Player created");
     }
 
-    /*
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
-    }*/
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -39,8 +41,6 @@ public class MPService extends Service implements MediaPlayer.OnErrorListener,
     }
 
     private void setProps(){
-        player.setWakeMode(getApplicationContext(),
-                PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnCompletionListener(this);
         player.setOnErrorListener(this);
@@ -48,6 +48,14 @@ public class MPService extends Service implements MediaPlayer.OnErrorListener,
 
     public void setPlayList(IPlayList pl){
         this.playlist=pl;
+    }
+
+    public IAudio getCurrentTrack(){
+        return playlist.getCurrentTrack();
+    }
+
+    public int currentTrackNum(){
+        return playlist.getCurrentTrackNum();
     }
 
     public void play() {

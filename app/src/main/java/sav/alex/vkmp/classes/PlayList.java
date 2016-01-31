@@ -1,5 +1,11 @@
 package sav.alex.vkmp.classes;
 
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import sav.alex.vkmp.intefaces.IAudio;
 import sav.alex.vkmp.intefaces.IPlayList;
 
 /**
@@ -7,25 +13,61 @@ import sav.alex.vkmp.intefaces.IPlayList;
  */
 public class PlayList implements IPlayList {
 
+    final String LOG_T = "PlayList";
+    ArrayList<Audio> audioList=null;
 
+    int currentTrack=0;
+
+    public PlayList(ArrayList<Audio> list){
+        if(list!=null) {
+            Log.d(LOG_T, "PlayList created");
+            audioList = list;
+        }
+        else{
+            Log.d(LOG_T, "PlayList not created(error null list)");
+        }
+    }
+
+    public PlayList(Audio [] array){
+        if(array!=null) {
+            Log.d(LOG_T, "PlayList created");
+            audioList = new ArrayList<>(Arrays.asList(array));
+        }
+        else{
+            Log.d(LOG_T, "PlayList not created(error null array)");
+        }
+    }
+    @Override
+    public IAudio getCurrentTrack(){
+        return audioList.get(currentTrack);
+    }
+
+    @Override
+    public int getCurrentTrackNum() {
+        return currentTrack;
+    }
 
     @Override
     public String getTrackAt(int id) {
-        return null;
+        currentTrack=id;
+        return audioList.get(id).getURL();
     }
 
     @Override
     public String nextTrack() {
-        return null;
+        if(currentTrack<audioList.size()-1) {
+            currentTrack+=1;
+            return audioList.get(currentTrack).getURL();
+        }
+        else return null;
     }
 
     @Override
     public String previousTrack() {
-        return null;
-    }
-
-    @Override
-    public String sourceType() {
-        return null;
+        if(currentTrack>0) {
+            currentTrack -= 1;
+            return audioList.get(currentTrack).getURL();
+        }
+        else return null;
     }
 }

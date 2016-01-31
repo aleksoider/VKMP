@@ -7,5 +7,6 @@ public interface IPlayList {
     public String getTrackAt(int id);
     public String nextTrack();
     public String previousTrack();
-    public String sourceType();
+    public IAudio getCurrentTrack();
+    public int getCurrentTrackNum();
 }

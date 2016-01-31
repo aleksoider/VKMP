@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">VKMP</string>
     <string name="title_activity_main">MainActivity</string>
-
+    <integer name="com_vk_sdk_AppId">3974615</integer>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
