@@ -29,6 +29,9 @@ public class MPService extends Service implements MediaPlayer.OnErrorListener,
         Log.d(LOG_T, "Player created");
     }
 
+    public boolean isPlaying(){
+        return player.isPlaying();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

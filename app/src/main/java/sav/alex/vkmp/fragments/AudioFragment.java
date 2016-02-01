@@ -63,7 +63,7 @@ public class AudioFragment extends Fragment {
             IAudio audio = MPService.INSTANCE.getCurrentTrack();
             artist.setText(audio.getArtist());
             trackName.setText(audio.getTitle());
-            trackNum.setText("1/"+adapter.getCount());
+            trackNum.setText("1/" + adapter.getCount());
         }
     }
     private void setTrackInfo(){
@@ -82,10 +82,17 @@ public class AudioFragment extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                    if (MPService.INSTANCE != null) {
-                        MPService.INSTANCE.playAt(i);
-                        setTrackInfo();
-                        updateProgressBar();
+                    if(MPService.INSTANCE != null) {
+                        if (MPService.INSTANCE.isPlaying() &&
+                                i == MPService.INSTANCE.currentTrackNum()) {
+                            playBtn.setBackgroundResource(android.R.drawable.ic_media_play);
+                            MPService.INSTANCE.pause();
+                        } else {
+                            playBtn.setBackgroundResource(android.R.drawable.ic_media_pause);
+                            MPService.INSTANCE.playAt(i);
+                            setTrackInfo();
+                            updateProgressBar();
+                        }
                     }
                 }
             });
@@ -97,9 +104,6 @@ public class AudioFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.fragment_audio, container, false);
-        SeekBar mSeekBar = (SeekBar) view.findViewById(R.id.seekBar);
-        mSeekBar.setProgressDrawable(getResources()
-                .getDrawable(R.drawable.progress_bar));
         playBtn = (Button) view.findViewById(R.id.playBtn);
         nextBtn = (Button) view.findViewById(R.id.nextBtn);
         prevBtn = (Button) view.findViewById(R.id.prevBtn);
@@ -110,6 +114,8 @@ public class AudioFragment extends Fragment {
         trackName = (TextView) view.findViewById(R.id.song);
         trackNum = (TextView) view.findViewById(R.id.songCount);
         songProgressBar = (SeekBar) view.findViewById(R.id.seekBar);
+        songProgressBar.setProgressDrawable(getResources()
+                .getDrawable(R.drawable.progress_bar));
         songProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -147,15 +153,16 @@ public class AudioFragment extends Fragment {
         playBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(MPService.INSTANCE != null){
-//                	if(PlayerService.INSTANCE.player.isPlaying()){
-//                		btnPlay.setBackgroundResource(R.drawable.btn_play);
-//                	}else{
-//                		btnPlay.setBackgroundResource(R.drawable.btn_pause);
-//                	};
-//                	if(btnPlay.getBackground().getCurrent() == R.drawable.btn_play)
-                    // Changing button image to pause button
-                    MPService.INSTANCE.play();
-//                    btnPlay.setBackgroundResource(R.drawable.btn_pause);
+                	if(MPService.INSTANCE.isPlaying()){
+                        playBtn.setBackgroundResource(android.R.drawable.ic_media_play);
+                        MPService.INSTANCE.pause();
+                	}else{
+                        playBtn.setBackgroundResource(android.R.drawable.ic_media_pause);
+                        //MPService.INSTANCE.playAt(MPService.INSTANCE.currentTrackNum());
+                        MPService.INSTANCE.play();
+                        setTrackInfo();
+                        updateProgressBar();
+                	};
                 }
             }
         });
@@ -190,6 +197,7 @@ public class AudioFragment extends Fragment {
     private Runnable mUpdateUITask = new Runnable() {
         public void run() {
             if(MPService.INSTANCE != null){
+                setTrackInfo();
                 long totalDuration = MPService.INSTANCE.getDuration();
                 long currentDuration = MPService.INSTANCE.getCurrentPosition();
                 songDurationLabel.setText(""+Utilites.milliSecondsToTimer(currentDuration));

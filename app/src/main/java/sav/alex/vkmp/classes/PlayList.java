@@ -59,7 +59,10 @@ public class PlayList implements IPlayList {
             currentTrack+=1;
             return audioList.get(currentTrack).getURL();
         }
-        else return null;
+        else{
+            currentTrack=0;
+            return audioList.get(currentTrack).getURL();
+        }
     }
 
     @Override
@@ -68,6 +71,9 @@ public class PlayList implements IPlayList {
             currentTrack -= 1;
             return audioList.get(currentTrack).getURL();
         }
-        else return null;
+        else {
+            currentTrack=audioList.size()-1;
+            return audioList.get(currentTrack).getURL();
+        }
     }
 }

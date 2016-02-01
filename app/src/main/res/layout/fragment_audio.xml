@@ -12,7 +12,9 @@
             android:layout_height="0dp"
             android:layout_weight="0.7"
             android:id="@+id/listView"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:headerDividersEnabled="false"
+            android:listSelector="#c6c6c6" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -49,22 +51,22 @@
             android:gravity="center_vertical|center_horizontal">
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="50dp"
                 android:layout_height="35dp"
                 android:id="@+id/prevBtn"
-                android:text="&lt;&lt;" />
+                android:background="@android:drawable/ic_media_previous" />
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="40dp"
                 android:layout_height="35dp"
                 android:id="@+id/playBtn"
-                android:text="PLAY" />
+                android:background="@android:drawable/ic_media_play" />
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="40dp"
                 android:layout_height="35dp"
                 android:id="@+id/nextBtn"
-                android:text=">>" />
+                android:background="@android:drawable/ic_media_next" />
 
         </LinearLayout>
 
@@ -76,7 +78,8 @@
             android:background="#000000"
             android:indeterminate="false"
             android:minHeight="3dip"
-            android:maxHeight="3dip"/>
+            android:maxHeight="3dip"
+            style="@android:style/Widget.SeekBar" />
 
         <LinearLayout
             android:layout_width="match_parent"
