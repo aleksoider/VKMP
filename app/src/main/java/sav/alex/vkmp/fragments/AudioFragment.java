@@ -36,20 +36,7 @@ import sav.alex.vkmp.services.MPService;
 public class AudioFragment extends Fragment {
     final String LOG_T = "AudioFragment";
     PlayListAdapter adapter;
-    View view;
 
-    private Handler mHandler = new Handler();
-
-    public static Button playBtn;
-    Button nextBtn;
-    Button prevBtn;
-    Button dwnBtn;
-
-    TextView songDurationLabel;
-    TextView artist;
-    TextView trackName;
-    TextView trackNum;
-    SeekBar songProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,18 +47,10 @@ public class AudioFragment extends Fragment {
     private void initMPService(ArrayList<Audio> audioList){
         if(MPService.INSTANCE!=null){
             MPService.INSTANCE.setPlayList(new PlayList(audioList));
-            IAudio audio = MPService.INSTANCE.getCurrentTrack();
-            artist.setText(audio.getArtist());
-            trackName.setText(audio.getTitle());
-            trackNum.setText("1/" + adapter.getCount());
+            PlayerFragment.INSTANCE.setTrackInfo();
         }
     }
-    private void setTrackInfo(){
-        IAudio audio = MPService.INSTANCE.getCurrentTrack();
-        artist.setText(audio.getArtist());
-        trackName.setText(audio.getTitle());
-        trackNum.setText((MPService.INSTANCE.currentTrackNum()+1)+"/"+adapter.getCount());
-    }
+
     public void getAudioList(){
         MainActivity activity = (MainActivity) getActivity();
         ArrayList<Audio> audioList= activity.getAudioList();
@@ -85,13 +64,13 @@ public class AudioFragment extends Fragment {
                     if(MPService.INSTANCE != null) {
                         if (MPService.INSTANCE.isPlaying() &&
                                 i == MPService.INSTANCE.currentTrackNum()) {
-                            playBtn.setBackgroundResource(android.R.drawable.ic_media_play);
+                           // playBtn.setBackgroundResource(android.R.drawable.ic_media_play);
                             MPService.INSTANCE.pause();
                         } else {
-                            playBtn.setBackgroundResource(android.R.drawable.ic_media_pause);
+                           // playBtn.setBackgroundResource(android.R.drawable.ic_media_pause);
                             MPService.INSTANCE.playAt(i);
-                            setTrackInfo();
-                            updateProgressBar();
+                            PlayerFragment.INSTANCE.setTrackInfo();
+                            PlayerFragment.INSTANCE.updateProgressBar();
                         }
                     }
                 }
@@ -103,111 +82,7 @@ public class AudioFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view=inflater.inflate(R.layout.fragment_audio, container, false);
-        playBtn = (Button) view.findViewById(R.id.playBtn);
-        nextBtn = (Button) view.findViewById(R.id.nextBtn);
-        prevBtn = (Button) view.findViewById(R.id.prevBtn);
-        //dwnBtn = (Button) view.findViewById(R.id.dwnBtn);
-        getAudioList();
-        songDurationLabel = (TextView) view.findViewById(R.id.duration);
-        artist = (TextView) view.findViewById(R.id.author);
-        trackName = (TextView) view.findViewById(R.id.song);
-        trackNum = (TextView) view.findViewById(R.id.songCount);
-        songProgressBar = (SeekBar) view.findViewById(R.id.seekBar);
-        songProgressBar.setProgressDrawable(getResources()
-                .getDrawable(R.drawable.progress_bar));
-        songProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-            }
-
-            /**
-             * When user starts moving the progress handler
-             * */
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // remove message Handler from updating progress bar
-                mHandler.removeCallbacks(mUpdateUITask);
-            }
-
-            /**
-             * When user stops moving the progress hanlder
-             * */
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                mHandler.removeCallbacks(mUpdateUITask);
-                if (MPService.INSTANCE != null) {
-                    int totalDuration = MPService.INSTANCE.getDuration();
-                    int currentPosition = Utilites.progressToTimer(seekBar.getProgress(), totalDuration);
-
-                    // forward or backward to certain seconds
-                    MPService.INSTANCE.seekTo(currentPosition);
-
-                    // update timer progress again
-                    updateProgressBar();
-                }
-            }
-        });
-
-        playBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(MPService.INSTANCE != null){
-                	if(MPService.INSTANCE.isPlaying()){
-                        playBtn.setBackgroundResource(android.R.drawable.ic_media_play);
-                        MPService.INSTANCE.pause();
-                	}else{
-                        playBtn.setBackgroundResource(android.R.drawable.ic_media_pause);
-                        //MPService.INSTANCE.playAt(MPService.INSTANCE.currentTrackNum());
-                        MPService.INSTANCE.play();
-                        setTrackInfo();
-                        updateProgressBar();
-                	};
-                }
-            }
-        });
-        prevBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(MPService.INSTANCE != null){
-                    MPService.INSTANCE.prev();
-                    setTrackInfo();
-                    updateProgressBar();
-                }
-            }
-        });
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(MPService.INSTANCE != null){
-                    MPService.INSTANCE.next();
-                    setTrackInfo();
-                    updateProgressBar();
-                }
-            }
-        });
-
-        //updateProgressBar();
-
+        View view = inflater.inflate(R.layout.fragment_audio, container, false);
         return view;
     }
-    public void updateProgressBar() {
-        mHandler.postDelayed(mUpdateUITask, 100);
-        setTrackInfo();
-    }
-
-    private Runnable mUpdateUITask = new Runnable() {
-        public void run() {
-            if(MPService.INSTANCE != null){
-                setTrackInfo();
-                long totalDuration = MPService.INSTANCE.getDuration();
-                long currentDuration = MPService.INSTANCE.getCurrentPosition();
-                songDurationLabel.setText(""+Utilites.milliSecondsToTimer(currentDuration));
-                // Updating progress bar
-                int progress = (int)(Utilites.getProgressPercentage(currentDuration, totalDuration));
-                //Log.d("Progress", ""+progress);
-                songProgressBar.setProgress(progress);
-                // Running this thread after 100 milliseconds
-                mHandler.postDelayed(this, 100);
-            }
-        }
-    };
 }

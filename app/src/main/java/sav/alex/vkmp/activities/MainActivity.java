@@ -70,21 +70,23 @@ public class MainActivity extends AppCompatActivity
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        startService(new Intent(this, MPService.class));
         VKRequest request = VKApi.audio().get();
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
-                audioList= JSONParser.parseAudioResponse(response.json);
+                audioList = JSONParser.parseAudioResponse(response.json);
                 FragmentManager fm = getSupportFragmentManager();
                 AudioFragment audioFragment = (AudioFragment) fm.findFragmentByTag("MyAudio");
                 audioFragment.getAudioList();
             }
+
             @Override
             public void onError(VKError error) {
                 Log.d(LOG_T, error.errorMessage);
             }
         });
-        startService(new Intent(this, MPService.class));
+
     }
 
     @Override

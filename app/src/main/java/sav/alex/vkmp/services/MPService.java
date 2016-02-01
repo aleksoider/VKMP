@@ -165,4 +165,8 @@ public class MPService extends Service implements MediaPlayer.OnErrorListener,
         player.release();
         Log.d(LOG_T, "Player destroyed");
     }
+
+    public int getTrackCount() {
+        return 0;
+    }
 }
